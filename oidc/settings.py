@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ay2d1h@#hzq0qh-mz8=&&yt48y!n+6v%0hdk^!$o)-5#a5m-ft'
+SECRET_KEY = 'django-insecure-hey5(@wc&m=yvevpr1*&h$yv#v6mf^@_2$t9&b#!q_2@94b9e_'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'users',
+    'user',
 ]
 
 MIDDLEWARE = [
@@ -55,9 +55,7 @@ ROOT_URLCONF = 'oidc.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            os.path.join(BASE_DIR, 'templates'),
-        ],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -79,12 +77,12 @@ WSGI_APPLICATION = 'oidc.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'bangumoe',
+        'NAME': 'oidc',
         'USER': 'root',
-        'PASSWORD':'204406',
-        'HOST':'127.0.0.1',
-        'PORT':3306,
-        'CHARSET':'utf8',
+        'PASSWORD': '204406',
+        'HOST': '127.0.0.1',
+        'PORT': 3306,
+        'CHARSET': 'utf8'
     }
 }
 
@@ -124,10 +122,6 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
-
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR,'static'),
-]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
