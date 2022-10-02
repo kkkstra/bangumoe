@@ -115,7 +115,7 @@ def token(request):
         if app_obj:
             if ((app_obj.client_type == 0) or (app_obj.client_type and client_secret == app_obj.client_secret)) and (
                     redirect_url == app_obj.redirect_url):
-                if grant_type == "code":
+                if grant_type == "authorization_code":
                     # 校验身份码
                     code_obj = models.AuthorizationCode.objects.filter(client_id=client_id).first()
                     if code_obj and code == code_obj.code:
