@@ -73,9 +73,9 @@ def edit_profile(request):
                 else:
                     return JsonResponse({"success": False, "code": "password_empty", "msg": "密码不能为空"})
             if req.get("email"):
-                models.User.objects.filter(id=user_id).update(username=req.get("email"))
+                models.User.objects.filter(id=user_id).update(email=req.get("email"))
             if req.get("intro"):
-                models.User.objects.filter(id=user_id).update(username=req.get("intro"))
+                models.User.objects.filter(id=user_id).update(intro=req.get("intro"))
             return JsonResponse({"success": True, "code": "edit_profile_success", "msg": "修改用户信息成功"})
         else:
             return JsonResponse({"success": False, "code": "user_not_exist", "msg": "用户不存在"})
