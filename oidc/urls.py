@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from user.views import register, login, edit_profile
-from oauth.views import register_application, auth, token
+from oauth.views import register_application, auth, token, verify
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,4 +26,5 @@ urlpatterns = [
     path('oauth/register', register_application),
     path('oauth/authorize', auth),
     path('oauth/token', token),
+    path('oauth/verify', verify),
 ]

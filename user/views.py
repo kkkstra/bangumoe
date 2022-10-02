@@ -79,3 +79,4 @@ def edit_profile(request):
             return JsonResponse({"success": True, "code": "edit_profile_success", "msg": "修改用户信息成功"})
         else:
             return JsonResponse({"success": False, "code": "user_not_exist", "msg": "用户不存在"})
+
