@@ -47,15 +47,12 @@ def register_application(request):
     if request.method == "POST":
         req = json.loads(request.body)
         app_name = req.get("app_name")
-        client_id = req.get("client_id")
-        if client_id == "":
-            client_id = generate_client_id()
-        client_secret = req.get("client_secret")
-        if client_secret == "":
-            client_secret = generate_client_secret()
+        client_id = generate_client_id()
         client_type = 0
+        client_secret = ""
         if req.get("client_type") == "confidential":
             client_type = 1
+            client_secret = generate_client_secret()
         redirect_url = req.get("redirect_url")
         if app_name and client_id and ((client_type and client_secret) or client_type == 0) and redirect_url:
             app_obj = models.Application.objects.filter(app_name=app_name).first()

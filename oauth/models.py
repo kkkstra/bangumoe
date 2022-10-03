@@ -31,6 +31,7 @@ class AccessToken(models.Model):
     expires_in = models.IntegerField(default=60)
     refresh_token = models.CharField(max_length=256)
     scope = models.CharField(max_length=128, default="default")
+    used = models.BooleanField(default=False)
 
     def __str__(self):
         return self.access_token

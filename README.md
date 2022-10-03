@@ -82,8 +82,6 @@
 ```json
 {
     "app_name": "xxx",
-    "client_id": "",
-    "client_secret": "",
     "client_type": "confidential",
     "redirect_url": "https://auth.kkkstra.cn/callback"
 }
@@ -92,10 +90,6 @@
 > **注册客户端信息：**
 >
 > `app_name`: 应用名称
->
-> `client_ud`: 应用id，若留空则自动生成并返回
->
-> `client_secret`: 应用密钥，若留空则自动生成并返回
 >
 > `client_type`: 有 `confidential` 和 `public` 两种
 >
