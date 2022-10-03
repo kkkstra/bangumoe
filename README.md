@@ -95,7 +95,7 @@
 >
 > `client_ud`: 应用id，若留空则自动生成并返回
 >
-> `client_secret`: 应用密钥
+> `client_secret`: 应用密钥，若留空则自动生成并返回
 >
 > `client_type`: 有 `confidential` 和 `public` 两种
 >
