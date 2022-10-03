@@ -129,7 +129,8 @@
 返回：
 
 ````json
-https://auth.kkkstra.cn/callback?code=AuthorizationCode&state=test
+HTTP/1.1 302 Found
+     Location: https://auth.kkkstra.cn/callback?code=AuthorizationCode&state=test
 ````
 
 ### 获取Access token POST /oauth/token
