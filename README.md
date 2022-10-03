@@ -73,7 +73,7 @@
 }
 ````
 
-## 阶段二
+## 阶段二&三
 
 > 实现使用 Authorization Code模式的OAuth2.0服务
 
@@ -128,10 +128,12 @@
 
 返回：
 
-````json
+````http
 HTTP/1.1 302 Found
      Location: https://auth.kkkstra.cn/callback?code=AuthorizationCode&state=test
 ````
+
+`error` 参考[官方文档](https://www.rfc-editor.org/rfc/rfc6749#section-4.1.2)
 
 ### 获取Access token POST /oauth/token
 
@@ -167,7 +169,37 @@ HTTP/1.1 302 Found
 }
 ```
 
+`error` 参考[官方文档](https://www.rfc-editor.org/rfc/rfc6749#section-5.2)
 
+### 使用Refresh Token刷新Access Token
+
+```json
+{
+    "grant_type": "refresh_token",
+    "refresh_token": "xxx",
+    "scope": "xxx"
+}
+```
+
+> `grant_type`: 授权方式
+>
+> `refresh_token`: Refresh Token
+>
+> `scope`: 可选项
+
+返回：
+
+```json
+{
+    "access_token": "xxx",
+    "token_type": "bearer",
+    "expires_in": 60,
+    "refresh_token": "xxx",
+    "scope": "read"
+}
+```
+
+`error` 参考[官方文档](https://www.rfc-editor.org/rfc/rfc6749#section-5.2)
 
 ### 校验Access Token POST /oauth/verify
 
