@@ -5,7 +5,7 @@ import time
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
-from openid import models
+from openid import models as openid_models
 from oauth import models
 
 
@@ -21,7 +21,7 @@ def oidc_register_oauth(request):
     js_res = json.loads(res.content.decode())
     client_id = js_res.get("client_id")
     client_secret = js_res.get("client_secret")
-    oauth_obj = models.ClientInformation(client_id=client_id, client_secret=client_secret)
+    oauth_obj = openid_models.ClientInformation(app_name="oidc", client_id=client_id, client_secret=client_secret)
     oauth_obj.save()
     return JsonResponse({"client_id": client_id, "client_secret": client_secret})
 

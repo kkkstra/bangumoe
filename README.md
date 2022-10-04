@@ -218,3 +218,75 @@ HTTP/1.1 302 Found
 }
 ```
 
+# 阶段四
+
+### 在OAuth中为OIDC服务注册应用信息 GET /oidc/register
+
+返回：
+
+```json
+{
+    "client_id": "xxx",
+    "client_secret": "xxx"
+}
+```
+
+### 获取code GET /oidc/authorize
+
+```json
+{
+    "response_type": "code",
+    "client_id": "xxx",
+    "scope": "openid email profile",
+    "redirect_uri": "http://127.0.0.1:8001/oidc/authorize/callback",
+    "state": "xxx"
+}
+```
+
+返回：
+
+```http
+  HTTP/1.1 302 Found
+  Location: https://client.example.org/cb?
+    code=SplxlOBeZQQYbYS6WxSbIA
+    &state=af0ifjsldkj
+```
+
+### 获取Access Token POST /oidc/token
+
+```json
+{
+    "access_token": "xxx",
+    "token_type": "bearer",
+    "expires_in": 60,
+    "refresh_token": "xxx",
+    "scope": "read"
+}
+```
+
+返回：
+
+```json
+  HTTP/1.1 200 OK
+  Content-Type: application/json
+  Cache-Control: no-store
+  Pragma: no-cache
+
+  {
+   "access_token": "SlAV32hkKG",
+   "token_type": "Bearer",
+   "refresh_token": "8xLOxBtZp8",
+   "expires_in": 3600,
+   "id_token": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjFlOWdkazcifQ.ewogImlzc
+     yI6ICJodHRwOi8vc2VydmVyLmV4YW1wbGUuY29tIiwKICJzdWIiOiAiMjQ4Mjg5
+     NzYxMDAxIiwKICJhdWQiOiAiczZCaGRSa3F0MyIsCiAibm9uY2UiOiAibi0wUzZ
+     fV3pBMk1qIiwKICJleHAiOiAxMzExMjgxOTcwLAogImlhdCI6IDEzMTEyODA5Nz
+     AKfQ.ggW8hZ1EuVLuxNuuIJKX_V8a_OMXzR0EHR9R6jgdqrOOF4daGU96Sr_P6q
+     Jp6IcmD3HP99Obi1PRs-cwh3LO-p146waJ8IhehcwL7F09JdijmBqkvPeB2T9CJ
+     NqeGpe-gccMg4vfKjkM8FcGvnzZUN4_KSP0aAp1tOJ1zZwgjxqGByKHiOtX7Tpd
+     QyHE5lcMiKPXfEIQILVq0pc_E2DzL7emopWoaoZTF_m0_N0YzFC6g6EJbOEoRoS
+     K5hoDalrcvRYLSrQAZZKflyuVCyixEoV9GfNQC3_osjzw2PAithfubEEBLuVVk4
+     XUVrWOLrLl0nx7RkKU8NXNHq-rvKMzqg"
+  }
+```
+
