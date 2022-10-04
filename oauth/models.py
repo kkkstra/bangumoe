@@ -36,3 +36,9 @@ class AccessToken(models.Model):
 
     def __str__(self):
         return self.access_token
+
+
+class CodeToUsername(models.Model):
+    code = models.CharField(max_length=256)
+    username = models.CharField(max_length=32)
+    auth_time = models.CharField(max_length=64)

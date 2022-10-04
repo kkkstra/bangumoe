@@ -1,5 +1,9 @@
-from django.shortcuts import render
+import time
+
+import requests
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
+from django.utils import timezone
 from user import models
 import json
 
@@ -7,7 +11,7 @@ import json
 # Create your views here.
 
 # 注册
-def register(request):
+def user_register(request):
     if request.method == "POST":
         req = json.loads(request.body)
         if req.get("username") and req.get("password"):
@@ -33,7 +37,7 @@ def register(request):
 
 
 # 登录
-def login(request):
+def user_login(request):
     if request.method == "POST":
         req = json.loads(request.body)
         if req.get("username") and req.get("password"):
@@ -52,7 +56,7 @@ def login(request):
 
 
 # 修改信息
-def edit_profile(request):
+def user_edit_profile(request):
     if request.method == "POST":
         req = json.loads(request.body)
         user_id = req.get("user_id")
@@ -80,3 +84,33 @@ def edit_profile(request):
         else:
             return JsonResponse({"success": False, "code": "user_not_exist", "msg": "用户不存在"})
 
+
+def user_oidc(request):
+    if request.method == "POST":
+        response_type = request.GET.get("response_type")
+        client_id = request.GET.get("client_id")
+        redirect_uri = request.GET.get("redirect_uri")
+        scope = request.GET.get("scope")
+        state = request.GET.get("state")
+        host = "http://" + request.get_host()
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        # 进行登录
+        res = requests.post(host + "/user/login/", json={"username": username, "password": password})
+        success = json.loads(res.content.decode()).get("success")
+        cur_time = timezone.now()
+        time_tp = cur_time.timetuple()
+        auth_time = time.mktime(time_tp)
+        if success:
+            url = "%s/oauth/authorize/callback?response_type=%s&scope=%s&client_id=%s&redirect_uri=%s&state=%s&username=%s&auth_time=%s" \
+                  % (host, response_type, scope, client_id, host + "/oidc/authorize/callback", state, username, str(auth_time))
+            return redirect(url)
+        else:
+            return JsonResponse({"success": False})
+    else:
+        response_type = request.GET.get("response_type")
+        client_id = request.GET.get("client_id")
+        redirect_uri = request.GET.get("redirect_uri")
+        scope = request.GET.get("scope")
+        state = request.GET.get("state")
+        return render(request, "login.html", locals())

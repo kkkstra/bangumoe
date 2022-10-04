@@ -43,7 +43,7 @@ def generate_token():
 
 
 # 注册应用信息
-def register_application(request):
+def oauth_register_application(request):
     if request.method == "POST":
         req = json.loads(request.body)
         app_name = req.get("app_name")
@@ -69,8 +69,42 @@ def register_application(request):
             return JsonResponse({"success": False, "error": "invalid_request", "error_description": "不能有字段为空"})
 
 
+def oauth_auth_callback(request):
+    if request.method == "GET":
+        response_type = request.GET.get("response_type")
+        client_id = request.GET.get("client_id")
+        redirect_uri = request.GET.get("redirect_uri")
+        scope = request.GET.get("scope")
+        state = request.GET.get("state")
+        username = request.GET.get("username")
+        auth_time = request.GET.get("auth_time")
+        # 验证身份
+        app_obj = models.Application.objects.filter(client_id=client_id).first()
+        if app_obj:
+            if redirect_uri == "" or redirect_uri == app_obj.redirect_uri:
+                # 生成AuthorizationCode
+                code = generate_authorization_code()
+                code_obj = models.AuthorizationCode.objects.filter(client_id=client_id).first()
+                if code_obj:
+                    models.AuthorizationCode.objects.filter(client_id=client_id).update(code=code,
+                                                                                        time=timezone.now())
+                else:
+                    code_obj = models.AuthorizationCode(client_id=client_id, code=code, scope=scope,
+                                                        time=timezone.now())
+                    code_obj.save()
+                # 把code绑定username
+                ctu_obj = models.CodeToUsername(code=code, username=username, auth_time=auth_time)
+                ctu_obj.save()
+                url = "%s?code=%s&state=%s&auth_time=%s" % (redirect_uri, code, state, auth_time)
+                return redirect(url)
+            else:
+                error = "access_denied"
+        else:
+            error = "unauthorized_client"
+
+
 # 获取authorization code
-def auth(request):
+def oauth_auth(request):
     if request.method == "GET":
         response_type = request.GET.get("response_type")
         client_id = request.GET.get("client_id")
@@ -85,17 +119,10 @@ def auth(request):
                 app_obj = models.Application.objects.filter(client_id=client_id).first()
                 if app_obj:
                     if redirect_uri == "" or redirect_uri == app_obj.redirect_uri:
-                        # 生成AuthorizationCode
-                        code = generate_authorization_code()
-                        code_obj = models.AuthorizationCode.objects.filter(client_id=client_id).first()
-                        if code_obj:
-                            models.AuthorizationCode.objects.filter(client_id=client_id).update(code=code,
-                                                                                                time=timezone.now())
-                        else:
-                            code_obj = models.AuthorizationCode(client_id=client_id, code=code, scope=scope,
-                                                                time=timezone.now())
-                            code_obj.save()
-                        url = "%s?code=%s&state=%s" % (redirect_uri, code, state)
+                        # 获取用户授权
+                        host = "http://" + request.get_host()
+                        url = "%s/user/authorize?response_type=%s&scope=%s&client_id=%s&redirect_uri=%s&state=%s" % \
+                              (host, response_type, scope, client_id, host + "/oidc/authorize/callback", state)
                         return redirect(url)
                     else:
                         error = "access_denied"
@@ -113,7 +140,7 @@ def auth(request):
 
 
 # 获取access token
-def token(request):
+def oauth_token(request):
     if request.method == "POST":
         req = json.loads(request.body)
         client_id = req.get("client_id")
@@ -144,13 +171,15 @@ def token(request):
                                     access_token = generate_token()
                                     refresh_token = generate_token()
                                     scope = code_obj.scope
-                                    token_obj = models.AccessToken(access_token=access_token, refresh_token=refresh_token,
+                                    token_obj = models.AccessToken(access_token=access_token,
+                                                                   refresh_token=refresh_token,
                                                                    scope=scope)
                                     token_obj.save()
                                     res = JsonResponse({"access_token": access_token, "token_type": "bearer",
-                                                        "expires_in": token_obj.expires_in, "refresh_token": refresh_token,
+                                                        "expires_in": token_obj.expires_in,
+                                                        "refresh_token": refresh_token,
                                                         "scope": scope})
-                                    res.headers = {"Cache-Control":"no-store", "Pragma": "no-cache"}
+                                    res.headers = {"Cache-Control": "no-store", "Pragma": "no-cache"}
                                     return res
                             else:
                                 if code_obj:
@@ -173,7 +202,9 @@ def token(request):
                         new_access_token = generate_token()
                         new_refresh_token = generate_token()
                         expires_in = expired_token.expires_in
-                        models.AccessToken.objects.filter(refresh_token=refresh_token).update(access_token=new_access_token,refresh_token=new_refresh_token,time=timezone.now(),used=False)
+                        models.AccessToken.objects.filter(refresh_token=refresh_token).update(
+                            access_token=new_access_token, refresh_token=new_refresh_token, time=timezone.now(),
+                            used=False)
                         res = JsonResponse({"access_token": new_access_token, "token_type": "bearer",
                                             "expires_in": expires_in, "refresh_token": new_refresh_token,
                                             "scope": scope})
@@ -187,12 +218,12 @@ def token(request):
             error, status_code = "invalid_request", 400
         res = JsonResponse({"error": error})
         res.status_code = status_code
-        res.headers = {"Cache-Control":"no-store", "Pragma": "no-cache"}
+        res.headers = {"Cache-Control": "no-store", "Pragma": "no-cache"}
         return res
 
 
 # 校验token
-def verify(request):
+def oauth_verify(request):
     if request.method == "POST":
         req = json.loads(request.body)
         access_token = req.get("access_token")
