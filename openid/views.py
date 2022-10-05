@@ -104,10 +104,19 @@ def oidc_user_info(request):
         token = token[1]
         token_obj = models.TokenToUsername.objects.filter(token=token).first()
         if token_obj:
-            username = token_obj.username
-            user_obj = user_models.User.objects.filter(username=username).first()
-            email = user_obj.email
-            intro = user_obj.intro
-            return JsonResponse({"sub": username, "email": email, "intro": intro})
+            host = "http://" + request.get_host()
+            headers = {'content-type': "application/json"}
+            body = {"access_token": token}
+            res = requests.post(host + "/oauth/verify", data=json.dumps(body), headers=headers)
+            js_res = json.loads(res.content.decode())
+            success = js_res.get("success")
+            if success:
+                username = token_obj.username
+                user_obj = user_models.User.objects.filter(username=username).first()
+                email = user_obj.email
+                intro = user_obj.intro
+                return JsonResponse({"sub": username, "email": email, "intro": intro})
+            else:
+                return JsonResponse({"success": False, "msg": "token校验失败"})
         else:
             return JsonResponse({"success": False, "msg": "token校验失败"})
