@@ -218,7 +218,7 @@ HTTP/1.1 302 Found
 }
 ```
 
-# 阶段四
+## 阶段四
 
 ### 在OAuth中为OIDC服务注册应用信息 GET /oidc/register
 
