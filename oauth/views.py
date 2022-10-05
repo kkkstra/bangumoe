@@ -175,6 +175,10 @@ def oauth_token(request):
                                                                    refresh_token=refresh_token,
                                                                    scope=scope)
                                     token_obj.save()
+                                    # 将token绑定username
+                                    username = models.CodeToUsername.objects.filter(code=code).first().username
+                                    ttu_obj = models.TokenToUsername(token=access_token, username=username)
+                                    ttu_obj.save()
                                     res = JsonResponse({"access_token": access_token, "token_type": "bearer",
                                                         "expires_in": token_obj.expires_in,
                                                         "refresh_token": refresh_token,

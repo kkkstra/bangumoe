@@ -42,3 +42,8 @@ class CodeToUsername(models.Model):
     code = models.CharField(max_length=256)
     username = models.CharField(max_length=32)
     auth_time = models.CharField(max_length=64)
+
+
+class TokenToUsername(models.Model):
+    token = models.CharField(max_length=256)
+    username = models.CharField(max_length=32)

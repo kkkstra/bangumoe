@@ -7,6 +7,7 @@ from django.shortcuts import redirect, render
 from django.utils import timezone
 from openid import models as openid_models
 from oauth import models
+from user import models as user_models
 
 
 # Create your views here.
@@ -90,7 +91,23 @@ def oidc_token(request):
         cur_time = timezone.now()
         time_tp = cur_time.timetuple()
         exp = time.mktime(time_tp) + expires_in
-        id_token = generate_id_token(host, username, client_id, exp, exp-expires_in, auth_time, client_secret)
+        id_token = generate_id_token(host, username, client_id, exp, exp - expires_in, auth_time, client_secret)
         res.headers = {"Cache-Control": "no-store", "Pragma": "no-cache"}
         return JsonResponse({"access_token": access_token, "token_type": token_type, "refresh_token": refresh_token,
                              "expires_in": expires_in, "id_token": id_token})
+
+
+def oidc_user_info(request):
+    if request.method == "GET":
+        req = str(request.META.get("HTTP_AUTHORIZATION"))
+        token = req.split()
+        token = token[1]
+        token_obj = models.TokenToUsername.objects.filter(token=token).first()
+        if token_obj:
+            username = token_obj.username
+            user_obj = user_models.User.objects.filter(username=username).first()
+            email = user_obj.email
+            intro = user_obj.intro
+            return JsonResponse({"sub": username, "email": email, "intro": intro})
+        else:
+            return JsonResponse({"success": False, "msg": "token校验失败"})

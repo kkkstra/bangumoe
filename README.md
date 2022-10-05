@@ -290,3 +290,23 @@ HTTP/1.1 302 Found
   }
 ```
 
+### 获取UserIndo EndPoint GET /oidc/user_info
+
+```http
+  GET /userinfo HTTP/1.1
+  Host: 127.0.0.1:8001
+  Authorization: Bearer SlAV32hkKG
+```
+
+返回：
+
+```json
+HTTP/1.1 200 OK
+Content-Type: application/json
+{
+    "sub": "xxx",
+    "email": "xxx",
+    "intro": "xxx"
+}
+```
+
