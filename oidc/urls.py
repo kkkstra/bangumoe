@@ -17,7 +17,8 @@ from django.contrib import admin
 from django.urls import path
 from user.views import user_register, user_login, user_edit_profile, user_oidc
 from oauth.views import oauth_register_application, oauth_auth, oauth_token, oauth_verify, oauth_auth_callback
-from openid.views import oidc_authorize, oidc_authorize_callback, oidc_token, oidc_register_oauth, oidc_user_info
+from openid.views import oidc_authorize, oidc_authorize_callback, oidc_token, oidc_register_oauth, oidc_user_info, \
+    oidc_config
 
 urlpatterns = [
     path('user/admin/', admin.site.urls),
@@ -35,4 +36,5 @@ urlpatterns = [
     path('oidc/authorize/callback', oidc_authorize_callback),
     path('oidc/token', oidc_token),
     path('oidc/user_info', oidc_user_info),
+    path('.well-known/openid-configuration', oidc_config)
 ]

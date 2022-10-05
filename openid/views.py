@@ -110,6 +110,7 @@ def oidc_user_info(request):
             res = requests.post(host + "/oauth/verify", data=json.dumps(body), headers=headers)
             js_res = json.loads(res.content.decode())
             success = js_res.get("success")
+            msg = js_res.get("msg")
             if success:
                 username = token_obj.username
                 user_obj = user_models.User.objects.filter(username=username).first()
@@ -117,6 +118,42 @@ def oidc_user_info(request):
                 intro = user_obj.intro
                 return JsonResponse({"sub": username, "email": email, "intro": intro})
             else:
-                return JsonResponse({"success": False, "msg": "token校验失败"})
+                return JsonResponse({"success": False, "msg": msg})
         else:
             return JsonResponse({"success": False, "msg": "token校验失败"})
+
+
+def oidc_config(request):
+    host = "http://" + request.get_host()
+    return JsonResponse({
+        "issuer": host,
+        "authorization_endpoint": host + "/oidc/authorize",
+        "token_endpoint": host + "/oidc/token",
+        "userinfo_endpoint": host + "/oidc/user_info",
+        "response_types_supported": [
+            "code"
+        ],
+        "subject_types_supported": [
+            "public",
+            "confidential"
+        ],
+        "id_token_signing_alg_values_supported": [
+            "HS256"
+        ],
+        "scopes_supported": [
+            "openid",
+            "email",
+            "profile"
+        ],
+        "token_endpoint_auth_methods_supported": [
+            "client_secret_bearer"
+        ],
+        "claims_supported": [
+            "sub",
+            "email",
+            "intro"
+        ],
+        "grant_types_supported": [
+            "authorization_code"
+        ]
+    })
