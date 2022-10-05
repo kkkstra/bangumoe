@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>搜索收藏夹</title>
+</head>
+<body>
+<h1>搜索收藏夹</h1>
+<form action="" method="POST">
+    <p>用户名：<input type="text" name="username" value={{ username }}></p>
+    <p>关键字：<input type="text" name="keywrd" value={{ keywrd }}></p>
+    <p></p><input type="submit" value="搜索"></p>
+</form>
+{% if res %}
+
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>番剧名</th>
+                    <th>话数</th>
+                    <th>导演</th>
+                    <th>状态</th>
+                    <th>评分</th>
+                    <th>吐槽</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for fav_obj in fav_list %}
+                <tr>
+                    <td>{{ fav_obj.title }}</td>
+                    <td>{{ fav_obj.episode }}</td>
+                    <td>{{ fav_obj.director }}</td>
+                    <td>
+                        {% if fav_obj.type == 1 %}想看
+                        {% elif fav_obj.type == 2 %}看过
+                        {% elif fav_obj.type == 2 %}在看
+                        {% elif fav_obj.type == 2 %}搁置
+                        {% elif fav_obj.type == 2 %}抛弃
+                        {% endif %}
+                    </td>
+                    <td>{{ fav_obj.score }}</td>
+                    <td>{{ fav_obj.comment }}</td>
+                    <td>
+                        <a href="/anime/edit_fav?username={{ username }}&aid={{ fav_obj.aid }}">编辑</a>
+                        <a href="/anime/delete_fav?username={{ username }}&aid={{ fav_obj.aid }}">删除</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+{% endif %}
+</body>
+</html>

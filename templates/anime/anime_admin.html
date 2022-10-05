@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>管理番剧</title>
+</head>
+<body>
+<h1>番剧管理</h1>
+{#添加番剧#}
+<p>添加番剧</p>
+<form action="" method="GET">
+    <p>番剧名: <input type="text" name="title"></p>
+    <p>话数: <input type="text" name="episode"></p>
+    <p>导演: <input type="text" name="director"></p>
+    <input type="submit" value="Add">
+</form>
+<p>番剧列表</p>
+<table border="1">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>番剧名</th>
+            <th>话数</th>
+            <th>导演</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for anime_obj in anime_list %}
+        <tr>
+            <td>{{ anime_obj.id }}</td>
+            <td>{{ anime_obj.title }}</td>
+            <td>{{ anime_obj.episode }}</td>
+            <td>{{ anime_obj.director }}</td>
+            <td>
+                <a href="/anime/delete?anime_id={{ anime_obj.id }}">删除</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>番剧收藏</title>
+</head>
+<body>
+<h1>番剧收藏</h1>
+<p>用户: {{ username }}</p>
+<p><a href="/anime/search_fav?username={{ username }}">搜索收藏夹</a></p>
+<p>收藏管理：</p>
+<table border="1">
+    <thead>
+        <tr>
+            <th>番剧名</th>
+            <th>话数</th>
+            <th>导演</th>
+            <th>状态</th>
+            <th>评分</th>
+            <th>吐槽</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for fav_obj in favor_list %}
+        <tr>
+            <td>{{ fav_obj.title }}</td>
+            <td>{{ fav_obj.episode }}</td>
+            <td>{{ fav_obj.director }}</td>
+            <td>
+                {% if fav_obj.type == 1 %}想看
+                {% elif fav_obj.type == 2 %}看过
+                {% elif fav_obj.type == 2 %}在看
+                {% elif fav_obj.type == 2 %}搁置
+                {% elif fav_obj.type == 2 %}抛弃
+                {% endif %}
+            </td>
+            <td>{{ fav_obj.score }}</td>
+            <td>{{ fav_obj.comment }}</td>
+            <td>
+                <a href="/anime/edit_fav?username={{ username }}&aid={{ fav_obj.aid }}">编辑</a>
+                <a href="/anime/delete_fav?username={{ username }}&aid={{ fav_obj.aid }}">删除</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<p>番剧列表：</p>
+<table border="1">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>番剧名</th>
+            <th>话数</th>
+            <th>导演</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for anime_obj in anime_list %}
+        <tr>
+            <td>{{ anime_obj.id }}</td>
+            <td>{{ anime_obj.title }}</td>
+            <td>{{ anime_obj.episode }}</td>
+            <td>{{ anime_obj.director }}</td>
+            <td>
+                <a href="/anime/edit_fav?username={{ username }}&aid={{ anime_obj.id }}">收藏</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>编辑收藏</title>
+</head>
+<body>
+<h1>编辑收藏</h1>
+<p>番剧名: {{ title }}</p>
+<p>话数: {{ episode }}</p>
+<p>导演: {{ director }}</p>
+<form action="" method="POST">
+    <p>用户: <input type="text" name="username" value="{{ username }}"></p>
+    <p>AID: <input type="text" name="aid" value="{{ aid }}"></p>
+    <p>状态:
+        <input type="radio" name="type" value="1" {% if status == 1 %}checked{% endif %}>想看
+        <input type="radio" name="type" value="2" {% if status == 2 %}checked{% endif %}>看过
+        <input type="radio" name="type" value="3" {% if status == 3 %}checked{% endif %}>在看
+        <input type="radio" name="type" value="4" {% if status == 4 %}checked{% endif %}>搁置
+        <input type="radio" name="type" value="5" {% if status == 5 %}checked{% endif %}>抛弃
+    </p>
+    <p>评分: <input type="number" min="1" max="5" name="score" value={{ score }}></p>
+    <p>吐槽: <textarea name="comment" rows="10" cols="30">{{ comment }}</textarea></p>
+    <input type="submit" value="收藏">
+</form>
+</body>
+</html>

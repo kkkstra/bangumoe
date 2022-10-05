@@ -53,6 +53,8 @@ def user_login(request):
                 return JsonResponse({"success": False, "code": "user_not_exist", "msg": "用户不存在"})
         else:
             return JsonResponse({"success": False, "code": "username_password_empty", "msg": "用户名或密码不能为空"})
+    # else:
+    #     return render(request, 'user/login.html', locals())
 
 
 # 修改信息
@@ -103,7 +105,8 @@ def user_oidc(request):
         auth_time = time.mktime(time_tp)
         if success:
             url = "%s/oauth/authorize/callback?response_type=%s&scope=%s&client_id=%s&redirect_uri=%s&state=%s&username=%s&auth_time=%s" \
-                  % (host, response_type, scope, client_id, host + "/oidc/authorize/callback", state, username, str(auth_time))
+                  % (host, response_type, scope, client_id, host + "/oidc/authorize/callback", state, username,
+                     str(auth_time))
             return redirect(url)
         else:
             return JsonResponse({"success": False})
@@ -113,4 +116,4 @@ def user_oidc(request):
         redirect_uri = request.GET.get("redirect_uri")
         scope = request.GET.get("scope")
         state = request.GET.get("state")
-        return render(request, "login.html", locals())
+        return render(request, "user/auth.html", locals())
