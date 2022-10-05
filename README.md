@@ -310,3 +310,42 @@ Content-Type: application/json
 }
 ```
 
+### .well-known/openid-configuration
+
+返回：
+
+```json
+{
+        "issuer": "http://127.0.0.1:8001",
+        "authorization_endpoint": "http://127.0.0.1:8001/oidc/authorize",
+        "token_endpoint": "http://127.0.0.1:8001/oidc/token",
+        "userinfo_endpoint": "http://127.0.0.1:8001/oidc/user_info",
+        "response_types_supported": [
+            "code"
+        ],
+        "subject_types_supported": [
+            "public",
+            "confidential"
+        ],
+        "id_token_signing_alg_values_supported": [
+            "HS256"
+        ],
+        "scopes_supported": [
+            "openid",
+            "email",
+            "profile"
+        ],
+        "token_endpoint_auth_methods_supported": [
+            "client_secret_bearer"
+        ],
+        "claims_supported": [
+            "sub",
+            "email",
+            "intro"
+        ],
+        "grant_types_supported": [
+            "authorization_code"
+        ]
+    }
+```
+
