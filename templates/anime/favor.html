@@ -8,6 +8,7 @@
 <h1>番剧收藏</h1>
 <p>用户: {{ username }}</p>
 <p><a href="/anime/search_fav?username={{ username }}">搜索收藏夹</a></p>
+<p><a href="/anime/get_code?username={{ username }}">从bangumi导入数据</a></p>
 <p>收藏管理：</p>
 <table border="1">
     <thead>
@@ -30,9 +31,9 @@
             <td>
                 {% if fav_obj.type == 1 %}想看
                 {% elif fav_obj.type == 2 %}看过
-                {% elif fav_obj.type == 2 %}在看
-                {% elif fav_obj.type == 2 %}搁置
-                {% elif fav_obj.type == 2 %}抛弃
+                {% elif fav_obj.type == 3 %}在看
+                {% elif fav_obj.type == 4 %}搁置
+                {% elif fav_obj.type == 5 %}抛弃
                 {% endif %}
             </td>
             <td>{{ fav_obj.score }}</td>

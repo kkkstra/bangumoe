@@ -47,3 +47,4 @@ class CodeToUsername(models.Model):
 class TokenToUsername(models.Model):
     token = models.CharField(max_length=256)
     username = models.CharField(max_length=32)
+

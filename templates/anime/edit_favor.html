@@ -19,7 +19,7 @@
         <input type="radio" name="type" value="4" {% if status == 4 %}checked{% endif %}>搁置
         <input type="radio" name="type" value="5" {% if status == 5 %}checked{% endif %}>抛弃
     </p>
-    <p>评分: <input type="number" min="1" max="5" name="score" value={{ score }}></p>
+    <p>评分: <input type="number" min="1" max="10" name="score" value={{ score }}></p>
     <p>吐槽: <textarea name="comment" rows="10" cols="30">{{ comment }}</textarea></p>
     <input type="submit" value="收藏">
 </form>

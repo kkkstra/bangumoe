@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>导入数据</title>
+</head>
+<body>
+<form action="" method="POST">
+    用户: <input type="text" name="username" value="{{ username }}">
+    <input type="submit" value="确认导入">
+</form>
+<table border="1">
+    <thead>
+        <tr>
+            <th>番剧名</th>
+            <th>状态</th>
+            <th>评分</th>
+            <th>吐槽</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for col_obj in data %}
+            <tr>
+                <td>{{ col_obj.subject.name_cn }}</td>
+                <td>
+                    {% if col_obj.type == 1 %}想看
+                    {% elif col_obj.type == 2 %}看过
+                    {% elif col_obj.type == 3 %}在看
+                    {% elif col_obj.type == 4 %}搁置
+                    {% elif col_obj.type == 5 %}抛弃
+                    {% endif %}
+                </td>
+                <td>{{ col_obj.rate }}</td>
+                <td>{{ col_obj.comment }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</body>
+</html>
