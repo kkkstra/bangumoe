@@ -42,8 +42,8 @@
                     <td>{{ fav_obj.score }}</td>
                     <td>{{ fav_obj.comment }}</td>
                     <td>
-                        <a href="/anime/edit_fav?username={{ username }}&aid={{ fav_obj.aid }}">编辑</a>
-                        <a href="/anime/delete_fav?username={{ username }}&aid={{ fav_obj.aid }}">删除</a>
+                        <a href="/anime/edit_fav?id={{ fav_obj.id }}">编辑</a>
+                        <a href="/anime/delete_fav?id={{ fav_obj.id }}">删除</a>
                     </td>
                 </tr>
             {% endfor %}

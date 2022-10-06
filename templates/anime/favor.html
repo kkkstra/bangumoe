@@ -8,6 +8,7 @@
 <h1>番剧收藏</h1>
 <p>用户: {{ username }}</p>
 <p><a href="/anime/search_fav?username={{ username }}">搜索收藏夹</a></p>
+<p><a href="/anime/add_fav?username={{ username }}&aid=0">添加收藏</a></p>
 <p><a href="/anime/get_code?username={{ username }}">从bangumi导入数据</a></p>
 <p>收藏管理：</p>
 <table border="1">
@@ -39,37 +40,37 @@
             <td>{{ fav_obj.score }}</td>
             <td>{{ fav_obj.comment }}</td>
             <td>
-                <a href="/anime/edit_fav?username={{ username }}&aid={{ fav_obj.aid }}">编辑</a>
-                <a href="/anime/delete_fav?username={{ username }}&aid={{ fav_obj.aid }}">删除</a>
+                <a href="/anime/edit_fav?id={{ fav_obj.id }}">编辑</a>
+                <a href="/anime/delete_fav?id={{ fav_obj.id }}">删除</a>
             </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
-<p>番剧列表：</p>
-<table border="1">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>番剧名</th>
-            <th>话数</th>
-            <th>导演</th>
-            <th>操作</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for anime_obj in anime_list %}
-        <tr>
-            <td>{{ anime_obj.id }}</td>
-            <td>{{ anime_obj.title }}</td>
-            <td>{{ anime_obj.episode }}</td>
-            <td>{{ anime_obj.director }}</td>
-            <td>
-                <a href="/anime/edit_fav?username={{ username }}&aid={{ anime_obj.id }}">收藏</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+{#<p>番剧列表：</p>#}
+{#<table border="1">#}
+{#    <thead>#}
+{#        <tr>#}
+{#            <th>ID</th>#}
+{#            <th>番剧名</th>#}
+{#            <th>话数</th>#}
+{#            <th>导演</th>#}
+{#            <th>操作</th>#}
+{#        </tr>#}
+{#    </thead>#}
+{#    <tbody>#}
+{#        {% for anime_obj in anime_list %}#}
+{#        <tr>#}
+{#            <td>{{ anime_obj.id }}</td>#}
+{#            <td>{{ anime_obj.title }}</td>#}
+{#            <td>{{ anime_obj.episode }}</td>#}
+{#            <td>{{ anime_obj.director }}</td>#}
+{#            <td>#}
+{#                <a href="/anime/edit_fav?username={{ username }}&aid={{ anime_obj.id }}">收藏</a>#}
+{#            </td>#}
+{#        </tr>#}
+{#        {% endfor %}#}
+{#    </tbody>#}
+{#</table>#}
 </body>
 </html>

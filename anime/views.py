@@ -57,53 +57,58 @@ def anime_favor(request):
     return render(request, 'anime/favor_login.html', locals())
 
 
-def delete_fav(request):
-    aid = request.GET.get("aid")
+def add_fav(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        aid = request.POST.get("aid")
+        title = request.POST.get("title")
+        episode = request.POST.get("episode")
+        director = request.POST.get("director")
+        status = request.POST.get("type")
+        score = request.POST.get("score")
+        comment = request.POST.get("comment")
+        fav_obj = models.UserFavorAnime(username=username, aid=aid, title=title, episode=episode, director=director,
+                                        type=status, score=score, comment=comment)
+        fav_obj.save()
+        return redirect("/anime/")
     username = request.GET.get("username")
-    models.UserFavorAnime.objects.filter(aid=aid, username=username).delete()
+    aid = request.GET.get("aid")
+    return render(request, 'anime/add_fav.html', locals())
+
+
+def delete_fav(request):
+    iid = request.GET.get("id")
+    models.UserFavorAnime.objects.filter(id=iid).delete()
     return redirect('/anime/')
 
 
 def edit_fav(request):
     if request.method == "POST":
+        iid = request.POST.get("id")
         username = request.POST.get("username")
         aid = request.POST.get("aid")
         status = request.POST.get("type")
         score = request.POST.get("score")
         comment = request.POST.get("comment")
-        anime_obj = models.UserFavorAnime.objects.filter(username=username,aid=aid).first()
-        if anime_obj:
-            title = anime_obj.title
-            episode = anime_obj.episode
-            director = anime_obj.director
-            fav_obj = models.UserFavorAnime.objects.filter(username=username, aid=aid).first()
-            if fav_obj:
-                models.UserFavorAnime.objects.filter(username=username, aid=aid).update(type=status, score=score,
-                                                                                        comment=comment)
-            else:
-                fav_obj = models.UserFavorAnime(username=username, aid=aid, type=status, score=score, comment=comment,
-                                                title=title, episode=episode, director=director)
-                fav_obj.save()
-            return redirect("/anime/")
-        else:
-            return HttpResponse(username)
+        fav_obj = models.UserFavorAnime.objects.filter(id=iid).first()
+        title = fav_obj.title
+        episode = fav_obj.episode
+        director = fav_obj.director
+        models.UserFavorAnime.objects.filter(username=username, aid=aid).update(type=status, score=score,
+                                                                                comment=comment)
+        return redirect("/anime/")
     else:
-        username = request.GET.get("username")
-        aid = request.GET.get("aid")
+        iid = request.GET.get("id")
+        fav_obj = models.UserFavorAnime.objects.filter(id=iid).first()
+        username = fav_obj.username
+        aid = fav_obj.aid
         # anime_obj = models.AnimeData.objects.filter(id=aid).first()
-        anime_obj = models.UserFavorAnime.objects.filter(username=username,aid=aid).first()
-        title = anime_obj.title
-        episode = anime_obj.episode
-        director = anime_obj.director
-        fav_obj = models.UserFavorAnime.objects.filter(username=username, aid=aid).first()
-        if fav_obj:
-            status = fav_obj.type
-            score = fav_obj.score
-            comment = fav_obj.comment
-        else:
-            status = 1
-            score = 5
-            comment = ""
+        title = fav_obj.title
+        episode = fav_obj.episode
+        director = fav_obj.director
+        status = fav_obj.type
+        score = fav_obj.score
+        comment = fav_obj.comment
         return render(request, "anime/edit_favor.html", locals())
 
 
