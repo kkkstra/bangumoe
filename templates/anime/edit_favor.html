@@ -6,23 +6,23 @@
 </head>
 <body>
 <h1>编辑收藏</h1>
-<p>番剧名: {{ title }}</p>
-<p>话数: {{ episode }}</p>
-<p>导演: {{ director }}</p>
 <form action="" method="POST">
-    <p>ID: <input type="text" name="id" value="{{ id }}"></p>
+    <p>ID: <input type="number" name="id" value="{{ iid }}"></p>
     <p>用户: <input type="text" name="username" value="{{ username }}"></p>
-    <p>AID: <input type="text" name="aid" value="{{ aid }}"></p>
+    <p>AID: <input type="number" name="aid" value="{{ aid }}"></p>
+    <p>番剧名: <input type="text" name="title" value="{{ title }}"></p>
+    <p>话数: <input type="number" name="episode" value="{{ episode }}"></p>
+    <p>导演: <input type="text" name="director" value="{{ director }}"></p>
     <p>状态:
-        <input type="radio" name="type" value="1" {% if status == 1 %}checked{% endif %}>想看
-        <input type="radio" name="type" value="2" {% if status == 2 %}checked{% endif %}>看过
-        <input type="radio" name="type" value="3" {% if status == 3 %}checked{% endif %}>在看
-        <input type="radio" name="type" value="4" {% if status == 4 %}checked{% endif %}>搁置
-        <input type="radio" name="type" value="5" {% if status == 5 %}checked{% endif %}>抛弃
+        <input type="radio" name="type" value="1"checked>想看
+        <input type="radio" name="type" value="2">看过
+        <input type="radio" name="type" value="3">在看
+        <input type="radio" name="type" value="4">搁置
+        <input type="radio" name="type" value="5">抛弃
     </p>
     <p>评分: <input type="number" min="1" max="10" name="score" value={{ score }}></p>
     <p>吐槽: <textarea name="comment" rows="10" cols="30">{{ comment }}</textarea></p>
-    <input type="submit" value="收藏">
+    <input type="submit" value="添加">
 </form>
 </body>
 </html>
