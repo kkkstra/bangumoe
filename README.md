@@ -11,7 +11,7 @@
 - 使用 `MySQL` 存储用户数据
 - 利用 `django` 作为后端框架
 
-### 注册 POST /register
+### 注册 POST /user/register/
 
 ```json
 {
@@ -32,7 +32,7 @@
 }
 ````
 
-### 登录 POST /login
+### 登录 POST /user/login/
 
 ```json
 {
@@ -51,7 +51,7 @@
 }
 ````
 
-### 修改信息 POST /edit_profile
+### 修改信息 POST /user/edit_profile/
 
 ```json
 {
