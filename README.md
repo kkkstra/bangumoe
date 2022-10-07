@@ -33,6 +33,28 @@
 }
 ````
 
+### 激活账号 POST /user/activate/
+
+```json
+{
+    "username": "xxx",
+    "password": "xxx",
+    "code": "xxx"
+}
+```
+
+返回：
+
+```json
+{
+    "success": true,
+    "code": "successfully_activated",
+    "msg": "账号激活成功"
+}
+```
+
+
+
 ### 登录 POST /user/login/
 
 ```json
