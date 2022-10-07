@@ -18,7 +18,7 @@ class AuthorizationCode(models.Model):
     client_id = models.CharField(primary_key=True, max_length=128)
     code = models.CharField(max_length=256)
     time = models.DateTimeField(auto_now=True)  # 创建时间
-    expires_in = models.IntegerField(default=3600)
+    expires_in = models.IntegerField(default=60)
     scope = models.CharField(max_length=128, default="default")
 
     def __str__(self):
@@ -29,7 +29,7 @@ class AccessToken(models.Model):
     time = models.DateTimeField(auto_now=True)  # 创建时间
     access_token = models.CharField(max_length=256)
     token_type = models.CharField(max_length=256, default="bearer")
-    expires_in = models.IntegerField(default=600)
+    expires_in = models.IntegerField(default=3600)
     refresh_token = models.CharField(max_length=256)
     scope = models.CharField(max_length=128, default="default")
     used = models.BooleanField(default=False)

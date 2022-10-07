@@ -31,7 +31,7 @@ def user_register(request):
             else:
                 user_obj = models.User(username=username, password=password, email=email, intro=intro)
                 user_obj.save()
-                return JsonResponse({"success": True, "code": "register_success", "msg": "注册成功"})
+                return JsonResponse({"success": True, "code": "register_success", "msg": "注册成功", "uid": user_obj.id})
         else:
             return JsonResponse({"success": False, "code": "username_password_empty", "msg": "用户名或密码不能为空"})
 
@@ -75,7 +75,7 @@ def user_edit_profile(request):
             if req.get("password"):
                 password = req.get("password")
                 if len(password):
-                    models.User.objects.filter(id=user_id).update(username=req.get("password"))
+                    models.User.objects.filter(id=user_id).update(password=req.get("password"))
                 else:
                     return JsonResponse({"success": False, "code": "password_empty", "msg": "密码不能为空"})
             if req.get("email"):
@@ -105,7 +105,7 @@ def user_oidc(request):
         auth_time = time.mktime(time_tp)
         if success:
             url = "%s/oauth/authorize/callback?response_type=%s&scope=%s&client_id=%s&redirect_uri=%s&state=%s&username=%s&auth_time=%s" \
-                  % (host, response_type, scope, client_id, host + "/oidc/authorize/callback", state, username,
+                  % (host, response_type, scope, client_id, redirect_uri, state, username,
                      str(auth_time))
             return redirect(url)
         else:

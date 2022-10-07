@@ -28,7 +28,8 @@
 {
     "success": True,
     "code": "register_success",
-    "msg": "注册成功"
+    "msg": "注册成功",
+    "uid": xxx
 }
 ````
 
@@ -83,7 +84,7 @@
 {
     "app_name": "xxx",
     "client_type": "confidential",
-    "redirect_url": "https://auth.kkkstra.cn/callback"
+    "redirect_uri": "https://auth.kkkstra.cn/callback"
 }
 ```
 
@@ -93,7 +94,7 @@
 >
 > `client_type`: 有 `confidential` 和 `public` 两种
 >
-> `redtrect_url`: 重定向url
+> `redtrect_uri`: 重定向url
 
 返回：
 
@@ -112,21 +113,21 @@
 {
     "response_type": "code",
     "client_id": "xxx",
-    "redirect_url": "https://auth.kkkstra.cn/callback",
-    "scope": "read",
+    "redirect_uri": "https://auth.kkkstra.cn/callback",
+    "scope": "default",
     "state": "xxx"
 }
 ```
 
 > `client_ud`: 应用id
 >
-> `redtrect_url`: 重定向url
+> `redtrect_uri`: 重定向url
 >
 > `scope`: 授权权限
 >
 > `state`: [参考博客](https://www.cnblogs.com/blowing00/p/14872312.html)
 
-返回：
+返回：**有效期为60秒**
 
 ````http
 HTTP/1.1 302 Found
@@ -143,7 +144,7 @@ HTTP/1.1 302 Found
     "client_id": "ZJSNaNGu0C9Y1CJxarFjEfWDdgraIKX6",
     "client_secret": "mFh5ZkKp2cDFqT8COy9dHjMhM9bQkv0hNURLl2dZIsa9yac_4VtwNEwpIhhoU4y-Ah5t7uma8BxcG8walIMzHg",
     "code": "vSRe0crW8O6O5cuI74GUvoV9SyWo6I3k",
-    "redirect_url": "https://auth.kkkstra.cn/callback"
+    "redirect_uri": "https://auth.kkkstra.cn/callback"
 }
 ```
 
@@ -155,7 +156,7 @@ HTTP/1.1 302 Found
 >
 > `code`: Authorization code
 >
-> `redtrect_url`: 重定向url
+> `redtrect_uri`: 重定向url
 
 返回：
 
@@ -163,7 +164,7 @@ HTTP/1.1 302 Found
 {
     "access_token": "xxx",
     "token_type": "bearer",
-    "expires_in": 60,
+    "expires_in": 3600,
     "refresh_token": "xxx",
     "scope": "read"
 }
@@ -256,11 +257,11 @@ HTTP/1.1 302 Found
 
 ```json
 {
-    "access_token": "xxx",
-    "token_type": "bearer",
-    "expires_in": 60,
-    "refresh_token": "xxx",
-    "scope": "read"
+    "grant_type": "authorization_code",
+    "client_id": "xxx",
+    "client_secret": "xxx",
+    "code": "xxx",
+    "redirect_uri": "http://127.0.0.1:8001/oidc/authorize/callback"
 }
 ```
 
@@ -290,7 +291,7 @@ HTTP/1.1 302 Found
   }
 ```
 
-### 获取UserIndo EndPoint GET /oidc/user_info
+### 获取UserInfo EndPoint GET /oidc/user_info
 
 ```http
   GET /userinfo HTTP/1.1
@@ -349,3 +350,6 @@ Content-Type: application/json
     }
 ```
 
+## 阶段五&六
+
+这两个阶段的内容做了（很拉跨的）前端啦！

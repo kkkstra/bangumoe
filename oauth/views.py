@@ -82,6 +82,7 @@ def oauth_auth_callback(request):
         app_obj = models.Application.objects.filter(client_id=client_id).first()
         if app_obj:
             if redirect_uri == "" or redirect_uri == app_obj.redirect_uri:
+                # return HttpResponse("!")
                 # 生成AuthorizationCode
                 code = generate_authorization_code()
                 code_obj = models.AuthorizationCode.objects.filter(client_id=client_id).first()
@@ -101,6 +102,11 @@ def oauth_auth_callback(request):
                 error = "access_denied"
         else:
             error = "unauthorized_client"
+        if state == "":
+            url = "%s?error=%s&state=%s" % (redirect_uri, error, state)
+        else:
+            url = "%s?error=%s" % (redirect_uri, error)
+        return redirect(url)
 
 
 # 获取authorization code
@@ -122,7 +128,7 @@ def oauth_auth(request):
                         # 获取用户授权
                         host = "http://" + request.get_host()
                         url = "%s/user/authorize?response_type=%s&scope=%s&client_id=%s&redirect_uri=%s&state=%s" % \
-                              (host, response_type, scope, client_id, host + "/oidc/authorize/callback", state)
+                              (host, response_type, scope, client_id, redirect_uri, state)
                         return redirect(url)
                     else:
                         error = "access_denied"
@@ -209,9 +215,10 @@ def oauth_token(request):
                         models.AccessToken.objects.filter(refresh_token=refresh_token).update(
                             access_token=new_access_token, refresh_token=new_refresh_token, time=timezone.now(),
                             used=False)
+                        models.TokenToUsername.objects.filter(token=expired_token.access_token).update(token=new_access_token)
                         res = JsonResponse({"access_token": new_access_token, "token_type": "bearer",
                                             "expires_in": expires_in, "refresh_token": new_refresh_token,
-                                            "scope": scope})
+                                            "scope": scope, "tt":expired_token.access_token})
                         res.headers = {"Cache-Control": "no-store", "Pragma": "no-cache"}
                         return res
                 else:
