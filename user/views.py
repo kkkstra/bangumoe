@@ -1,8 +1,12 @@
+import secrets
+import string
 import time, requests, bcrypt
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
 from user import models
+from django.core.mail import send_mail
+from oidc.settings import EMAIL_FROM
 import json
 
 
@@ -21,6 +25,24 @@ def checkpwd(passwd, hashed):
     passwd = passwd.encode()
     hashed = hashed.encode()
     return bcrypt.checkpw(passwd, hashed)
+
+
+# 生成验证码
+def generate_verify_code():
+    alphabet = string.ascii_letters + string.digits
+    while True:
+        verify_code = ''.join(secrets.choice(alphabet) for i in range(6))
+        if (any(c.islower() for c in verify_code)
+                and any(c.isupper() for c in verify_code)
+                and any(c.isupper() for c in verify_code)):
+            break
+    return verify_code
+
+
+def send_verify_email(email, code):
+    email_title = 'bangumoe - 注册激活链接'
+    email_body = '您的激活验证码为%s，请点击下方的链接激活你的账号：http://127.0.0.1:8001/user/activate/' % code
+    send_status = send_mail(email_title, email_body, EMAIL_FROM, [email])  # 注释 ①
 
 
 # 注册
@@ -43,12 +65,40 @@ def user_register(request):
             if len(user_obj) != 0:
                 return JsonResponse({"success": False, "code": "user_exist", "msg": "用户已存在"})
             else:
-                user_obj = models.User(username=username, password=password.decode(), email=email, intro=intro)
+                code = generate_verify_code()
+                # 发送注册邮件
+                send_verify_email(email, code)
+                user_obj = models.User(username=username, password=password.decode(), email=email, intro=intro,
+                                       code=code)
                 user_obj.save()
                 return JsonResponse(
-                    {"success": True, "code": "register_success", "msg": "注册成功", "uid": user_obj.id})
+                    {"success": True, "code": "register_success", "msg": "注册成功，请使用验证码激活账号",
+                     "uid": user_obj.id})
         else:
             return JsonResponse({"success": False, "code": "username_password_empty", "msg": "用户名或密码不能为空"})
+
+
+def user_activate(request):
+    if request.method == "POST":
+        req = json.loads(request.body)
+        username = req.get("username")
+        password = req.get("password")
+        code = req.get("code")
+        user_obj = models.User.objects.filter(username=username).first()
+        if user_obj:
+            if checkpwd(password, user_obj.password):
+                if user_obj.activated:
+                    return JsonResponse({"success": False, "code": "already_activated", "msg": "用户已激活"})
+                else:
+                    if code == user_obj.code:
+                        models.User.objects.filter(username=username).update(activated=True)
+                        return JsonResponse({"success": True, "code": "successfully_activated", "msg": "账号激活成功"})
+                    else:
+                        return JsonResponse({"success": False, "code": "code_wrong", "msg": "验证码错误"})
+            else:
+                return JsonResponse({"success": False, "code": "password_mistaken", "msg": "密码错误"})
+        else:
+            return JsonResponse({"success": False, "code": "user_not_exist", "msg": "用户不存在"})
 
 
 # 登录
@@ -59,13 +109,13 @@ def user_login(request):
             username = req.get("username")
             password = req.get("password")
             user_obj = models.User.objects.filter(username=username).first()
-            if user_obj:
+            if user_obj and user_obj.activated:
                 if checkpwd(password, user_obj.password):
                     return JsonResponse({"success": True, "code": "login_success", "msg": "登录成功"})
                 else:
                     return JsonResponse({"success": False, "code": "password_mistaken", "msg": "密码错误"})
             else:
-                return JsonResponse({"success": False, "code": "user_not_exist", "msg": "用户不存在"})
+                return JsonResponse({"success": False, "code": "user_not_exist", "msg": "用户不存在或未激活"})
         else:
             return JsonResponse({"success": False, "code": "username_password_empty", "msg": "用户名或密码不能为空"})
     # else:
@@ -81,7 +131,7 @@ def user_edit_profile(request):
         # 身份验证
         username = req.get("username")
         password = req.get("password")
-        if user_obj:
+        if user_obj and user_obj.activated:
             if username == user_obj.username and checkpwd(password, user_obj.password):
                 if req.get("new_username"):
                     new_username = req.get("new_username")
@@ -100,14 +150,15 @@ def user_edit_profile(request):
                     else:
                         return JsonResponse({"success": False, "code": "password_empty", "msg": "密码不能为空"})
                 if req.get("email"):
-                    models.User.objects.filter(id=user_id).update(email=req.get("email"))
+                    email = req.get("email")
+                    models.User.objects.filter(id=user_id).update(email=email)
                 if req.get("intro"):
                     models.User.objects.filter(id=user_id).update(intro=req.get("intro"))
                 return JsonResponse({"success": True, "code": "edit_profile_success", "msg": "修改用户信息成功"})
             else:
                 return JsonResponse({"success": False, "code": "password_mistaken", "msg": "密码错误"})
         else:
-            return JsonResponse({"success": False, "code": "user_not_exist", "msg": "用户不存在"})
+            return JsonResponse({"success": False, "code": "user_not_exist", "msg": "用户不存在或未激活"})
 
 
 def user_oidc(request):
