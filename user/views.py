@@ -61,9 +61,19 @@ def user_register(request):
                 intro = req.get("intro")
             else:
                 intro = "这个人很懒，什么都没有留下。"
-            user_obj = models.User.objects.filter(username=username)
-            if len(user_obj) != 0:
-                return JsonResponse({"success": False, "code": "user_exist", "msg": "用户已存在"})
+            user_obj = models.User.objects.filter(username=username).first()
+            if user_obj:
+                if user_obj.activated:
+                    return JsonResponse({"success": False, "code": "user_exist", "msg": "用户已存在"})
+                else:
+                    code = generate_verify_code()
+                    send_verify_email(email, code)
+                    models.User.objects.filter(username=username).update(password=password.decode(), email=email,
+                                                                         intro=intro,
+                                                                         code=code)
+                    return JsonResponse(
+                        {"success": True, "code": "register_success", "msg": "注册成功，请使用验证码激活账号",
+                         "uid": user_obj.id})
             else:
                 code = generate_verify_code()
                 # 发送注册邮件
