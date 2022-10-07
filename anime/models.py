@@ -12,7 +12,7 @@ class AnimeData(models.Model):
 
 class UserFavorAnime(models.Model):
     username = models.CharField(max_length=32, verbose_name="用户名")
-    aid = models.IntegerField(verbose_name="aid")
+    aid = models.IntegerField(verbose_name="aid") # 0表示用户手动添加，否则为bangumi中对应id
     title = models.CharField(max_length=128, verbose_name="番剧名")
     episode = models.IntegerField(verbose_name="话数")
     director = models.CharField(max_length=128, verbose_name="导演")
@@ -20,9 +20,11 @@ class UserFavorAnime(models.Model):
     score = models.IntegerField(default=10, verbose_name="评分")
     comment = models.CharField(max_length=1024, verbose_name="吐槽")
 
+
 class StateToUsername(models.Model):
     state = models.CharField(primary_key=True, max_length=32)
     username = models.CharField(max_length=32)
+
 
 class UsernameToToken(models.Model):
     username = models.CharField(max_length=32)

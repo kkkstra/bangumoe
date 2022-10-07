@@ -19,12 +19,22 @@ def oidc_register_oauth(request):
     body = {"app_name": "oidc", "client_type": "confidential",
             "redirect_uri": "http://127.0.0.1:8001/oidc/authorize/callback"}
     res = requests.post(host + "/oauth/register", data=json.dumps(body), headers=headers)
+    # return HttpResponse(res.content.decode())
     js_res = json.loads(res.content.decode())
-    client_id = js_res.get("client_id")
-    client_secret = js_res.get("client_secret")
-    oauth_obj = openid_models.ClientInformation(app_name="oidc", client_id=client_id, client_secret=client_secret)
-    oauth_obj.save()
-    return JsonResponse({"client_id": client_id, "client_secret": client_secret})
+    if js_res.get("success"):
+        client_id = js_res.get("client_id")
+        client_secret = js_res.get("client_secret")
+        oauth_obj = openid_models.ClientInformation.objects.filter(app_name="oidc").first()
+        if oauth_obj:
+            openid_models.ClientInformation.objects.filter(app_name="oidc").update(client_id=client_id,
+                                                                                   client_secret=client_secret)
+        else:
+            oauth_obj = openid_models.ClientInformation(app_name="oidc", client_id=client_id,
+                                                        client_secret=client_secret)
+            oauth_obj.save()
+        return JsonResponse({"client_id": client_id, "client_secret": client_secret})
+    else:
+        return JsonResponse(js_res)
 
 
 def oidc_authorize_callback(request):

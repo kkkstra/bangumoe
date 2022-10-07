@@ -1,6 +1,4 @@
-import time
-
-import requests
+import time, requests, bcrypt
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
@@ -10,13 +8,29 @@ import json
 
 # Create your views here.
 
+# 加密密码
+def encrypt_passwd(passwd):
+    passwd = passwd.encode()
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(passwd, salt)
+    return hashed
+
+
+# 校验密码
+def checkpwd(passwd, hashed):
+    passwd = passwd.encode()
+    hashed = hashed.encode()
+    return bcrypt.checkpw(passwd, hashed)
+
+
 # 注册
 def user_register(request):
     if request.method == "POST":
         req = json.loads(request.body)
         if req.get("username") and req.get("password"):
             username = req.get("username")
-            password = req.get("password")
+            passwd = req.get("password")
+            password = encrypt_passwd(passwd)  # 加密密码
             if req.get("email"):
                 email = req.get("email")
             else:
@@ -29,9 +43,10 @@ def user_register(request):
             if len(user_obj) != 0:
                 return JsonResponse({"success": False, "code": "user_exist", "msg": "用户已存在"})
             else:
-                user_obj = models.User(username=username, password=password, email=email, intro=intro)
+                user_obj = models.User(username=username, password=password.decode(), email=email, intro=intro)
                 user_obj.save()
-                return JsonResponse({"success": True, "code": "register_success", "msg": "注册成功", "uid": user_obj.id})
+                return JsonResponse(
+                    {"success": True, "code": "register_success", "msg": "注册成功", "uid": user_obj.id})
         else:
             return JsonResponse({"success": False, "code": "username_password_empty", "msg": "用户名或密码不能为空"})
 
@@ -45,7 +60,7 @@ def user_login(request):
             password = req.get("password")
             user_obj = models.User.objects.filter(username=username).first()
             if user_obj:
-                if password == user_obj.password:
+                if checkpwd(password, user_obj.password):
                     return JsonResponse({"success": True, "code": "login_success", "msg": "登录成功"})
                 else:
                     return JsonResponse({"success": False, "code": "password_mistaken", "msg": "密码错误"})
@@ -73,9 +88,10 @@ def user_edit_profile(request):
                 else:
                     models.User.objects.filter(id=user_id).update(username=username)
             if req.get("password"):
-                password = req.get("password")
-                if len(password):
-                    models.User.objects.filter(id=user_id).update(password=req.get("password"))
+                passwd = req.get("password")
+                if len(passwd):
+                    password = encrypt_passwd(passwd)  # 加密密码
+                    models.User.objects.filter(id=user_id).update(password=password.decode())
                 else:
                     return JsonResponse({"success": False, "code": "password_empty", "msg": "密码不能为空"})
             if req.get("email"):

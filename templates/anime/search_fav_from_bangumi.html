@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>添加收藏</title>
+</head>
+<body>
+<h1>添加收藏</h1>
+<form action="" method="POST">
+    <p>用户名：<input type="text" name="username" value={{ username }}></p>
+    <p>关键字：<input type="text" name="keywrd" value={{ keywrd }}></p>
+    <p></p><input type="submit" value="搜索"></p>
+</form>
+<table border="1">
+    <thead>
+        <tr>
+            <th width=50>番剧名</th>
+            <th>评分</th>
+            <th width=100>简介</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for search_obj in search_list %}
+        <tr>
+            {% if search_obj.name_cn == "" %}
+                <td>{{ search_obj.name }}</td>
+            {% else %}
+                <td>{{ search_obj.name_cn }}</td>
+            {% endif %}
+            <td>{{ search_obj.score }}</td>
+            <td>{{ search_obj.summary }}</td>
+            <td><a href="/anime/add_fav?username={{ username }}&aid={{ search_obj.id }}">收藏</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</body>
+</html>

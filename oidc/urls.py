@@ -20,7 +20,7 @@ from oauth.views import oauth_register_application, oauth_auth, oauth_token, oau
 from openid.views import oidc_authorize, oidc_authorize_callback, oidc_token, oidc_register_oauth, oidc_user_info, \
     oidc_config
 from anime.views import anime_manage, delete_anime, anime_favor, add_fav, delete_fav, edit_fav, search_fav, \
-    get_code_from_bangumi, get_code_from_bangumi_callback, import_data_from_bangumi
+    get_code_from_bangumi, get_code_from_bangumi_callback, import_data_from_bangumi, add_fav_from_bangumi
 
 urlpatterns = [
     path('user/admin/', admin.site.urls),
@@ -43,6 +43,7 @@ urlpatterns = [
     path('anime/admin', anime_manage),
     path('anime/delete', delete_anime),
     path('anime/add_fav', add_fav),
+    path('anime/add_fav/bangumi', add_fav_from_bangumi),
     path('anime/delete_fav', delete_fav),
     path('anime/edit_fav', edit_fav),
     path('anime/search_fav', search_fav),

@@ -236,3 +236,19 @@ def import_data_from_bangumi(request):
     data = js_res.get("data")
     # return HttpResponse(res.content.decode())
     return render(request, 'anime/import.html', locals())
+
+
+def add_fav_from_bangumi(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        keywrd = request.POST.get("keywrd")
+        # 获取搜索内容
+        url = "https://api.bgm.tv/v0/search/subjects"
+        headers = {'content-type': "application/json", 'User-Agent': 'kkkstra/bangumoue'}
+        body = {"keyword": keywrd, "filter": {"type": [2]}}
+        res = requests.post(url, data=json.dumps(body), headers=headers)
+        js_res = json.loads(res.content.decode())
+        search_list = js_res.get("data")
+        return render(request, 'anime/search_fav_from_bangumi.html', locals())
+    username = request.GET.get("username")
+    return render(request, 'anime/search_fav_from_bangumi.html', locals())
