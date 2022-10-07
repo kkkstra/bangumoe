@@ -30,7 +30,7 @@
             {% endif %}
             <td>{{ search_obj.score }}</td>
             <td>{{ search_obj.summary }}</td>
-            <td><a href="/anime/add_fav?username={{ username }}&aid={{ search_obj.id }}">收藏</a></td>
+            <td><a href="/anime/add_fav/bangumi/add?username={{ username }}&aid={{ search_obj.id }}">收藏</a></td>
         </tr>
         {% endfor %}
     </tbody>

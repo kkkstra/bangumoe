@@ -199,6 +199,8 @@ def import_data_from_bangumi(request):
             aid = data_obj.get("subject_id")
             subject = data_obj.get("subject")
             title = subject.get("name_cn")
+            if title == "":
+                title = subject.get("name")
             episode = subject.get("eps")
             # 获取导演信息
             url = "https://api.bgm.tv/v0/subjects/%s/persons" % str(aid)
@@ -238,7 +240,7 @@ def import_data_from_bangumi(request):
     return render(request, 'anime/import.html', locals())
 
 
-def add_fav_from_bangumi(request):
+def search_fav_from_bangumi(request):
     if request.method == "POST":
         username = request.POST.get("username")
         keywrd = request.POST.get("keywrd")
@@ -252,3 +254,43 @@ def add_fav_from_bangumi(request):
         return render(request, 'anime/search_fav_from_bangumi.html', locals())
     username = request.GET.get("username")
     return render(request, 'anime/search_fav_from_bangumi.html', locals())
+
+
+def add_fav_from_bangumi(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        aid = request.POST.get("aid")
+        title = request.POST.get("title")
+        episode = request.POST.get("episode")
+        director = request.POST.get("director")
+        status = request.POST.get("type")
+        score = request.POST.get("score")
+        comment = request.POST.get("comment")
+        fav_obj = models.UserFavorAnime(username=username, aid=aid, title=title, episode=episode, director=director,
+                                        type=status, score=score, comment=comment)
+        fav_obj.save()
+        return redirect("/anime/")
+    username = request.GET.get("username")
+    aid = request.GET.get("aid")
+    # 从bangumi上获取相关信息
+    headers = {'User-Agent': 'kkkstra/bangumoue'}
+    url = "https://api.bgm.tv/v0/subjects/%s" % str(aid)
+    res = requests.get(url, headers=headers)
+    js_res = json.loads(res.content.decode())
+    title = js_res.get("name_cn")
+    if title == "":
+        title = js_res.get("name")
+    episode = js_res.get("eps")
+    # 获取导演信息
+    url = "https://api.bgm.tv/v0/subjects/%s/persons" % str(aid)
+    headers = {'User-Agent': 'kkkstra/bangumoue'}
+    person_res = requests.get(url, headers=headers)
+    person_js_res = json.loads(person_res.content.decode())
+    # director = ""
+    # return HttpResponse(person_res.content.decode())
+    director = ""
+    for i in range(0, len(person_js_res) - 1):
+        if person_js_res[i].get("relation") == "总导演" or person_js_res[i].get("relation") == "导演":
+            director = person_js_res[i].get("name")
+            break
+    return render(request, 'anime/add_fav_from_bangumi.html', locals())
