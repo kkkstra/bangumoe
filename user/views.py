@@ -78,27 +78,34 @@ def user_edit_profile(request):
         req = json.loads(request.body)
         user_id = req.get("user_id")
         user_obj = models.User.objects.filter(id=user_id).first()
+        # 身份验证
+        username = req.get("username")
+        password = req.get("password")
         if user_obj:
-            if req.get("username"):
-                username = req.get("username")
-                if len(models.User.objects.filter(username=username)) != 0 and username != user_obj.username:
-                    return JsonResponse({"success": False, "code": "username_exist", "msg": "用户名已经存在"})
-                elif len(username) == 0:
-                    return JsonResponse({"success": False, "code": "username_empty", "msg": "用户名不能为空"})
-                else:
-                    models.User.objects.filter(id=user_id).update(username=username)
-            if req.get("password"):
-                passwd = req.get("password")
-                if len(passwd):
-                    password = encrypt_passwd(passwd)  # 加密密码
-                    models.User.objects.filter(id=user_id).update(password=password.decode())
-                else:
-                    return JsonResponse({"success": False, "code": "password_empty", "msg": "密码不能为空"})
-            if req.get("email"):
-                models.User.objects.filter(id=user_id).update(email=req.get("email"))
-            if req.get("intro"):
-                models.User.objects.filter(id=user_id).update(intro=req.get("intro"))
-            return JsonResponse({"success": True, "code": "edit_profile_success", "msg": "修改用户信息成功"})
+            if username == user_obj.username and checkpwd(password, user_obj.password):
+                if req.get("new_username"):
+                    new_username = req.get("new_username")
+                    if len(models.User.objects.filter(
+                            username=new_username)) != 0 and new_username != user_obj.username:
+                        return JsonResponse({"success": False, "code": "username_exist", "msg": "用户名已经存在"})
+                    elif len(new_username) == 0:
+                        return JsonResponse({"success": False, "code": "username_empty", "msg": "用户名不能为空"})
+                    else:
+                        models.User.objects.filter(id=user_id).update(username=new_username)
+                if req.get("new_password"):
+                    passwd = req.get("new_password")
+                    if len(passwd):
+                        new_password = encrypt_passwd(passwd)  # 加密密码
+                        models.User.objects.filter(id=user_id).update(password=new_password.decode())
+                    else:
+                        return JsonResponse({"success": False, "code": "password_empty", "msg": "密码不能为空"})
+                if req.get("email"):
+                    models.User.objects.filter(id=user_id).update(email=req.get("email"))
+                if req.get("intro"):
+                    models.User.objects.filter(id=user_id).update(intro=req.get("intro"))
+                return JsonResponse({"success": True, "code": "edit_profile_success", "msg": "修改用户信息成功"})
+            else:
+                return JsonResponse({"success": False, "code": "password_mistaken", "msg": "密码错误"})
         else:
             return JsonResponse({"success": False, "code": "user_not_exist", "msg": "用户不存在"})
 

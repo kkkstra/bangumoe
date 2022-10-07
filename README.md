@@ -59,6 +59,8 @@
     "user_id": xxx,
     "username": "xxx",
     "password": "xxx",
+    "new_username": "xxx",
+    "new_password": "xxx",
     "email": "xxx",
     "intro": "xxx"
 }

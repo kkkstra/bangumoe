@@ -128,3 +128,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'upload')
 
 # MEDIA_URL = '/media/'
+
+EMAIL_HOST = 'smtp.163.com'  # 163邮箱的 SMTP 地址
+
+EMAIL_PORT = 25     # SMTP端口
+
+EMAIL_HOST_USER = 'patrick_0406@163.com'       # 我自己的邮箱
+
+EMAIL_HOST_PASSWORD = 'TCZXJMRLRZWYSZAE'       # 我的邮箱授权码
+
+EMAIL_SUBJECT_PREFIX = '[kkkstra]'     # 为邮件Subject-line前缀,默认是'[django]'
+
+EMAIL_USE_TLS = False   # 与SMTP服务器通信时，是否启动TLS链接(安全链接)。默认是false
+
+EMAIL_FROM = 'patrick_0406@163.com'  # 与 EMAIL_HOST_USER 相同

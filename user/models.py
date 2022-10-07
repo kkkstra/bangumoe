@@ -17,6 +17,8 @@ class User(models.Model):
     password = models.CharField(max_length=512, verbose_name="密码")
     email = models.CharField(max_length=32, verbose_name="邮箱")
     intro = models.CharField(max_length=512, default="这个人很懒，什么都没有留下。", verbose_name="简介")
+    activated = models.BooleanField(default=False, verbose_name="激活状态")
+    code = models.CharField(max_length=10, verbose_name="激活验证码")
     # avatar = models.ImageField('头像', upload_to=user_directory_path, null=True, blank=True)
 
     def __str__(self):
