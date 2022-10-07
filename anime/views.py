@@ -244,10 +244,11 @@ def search_fav_from_bangumi(request):
     if request.method == "POST":
         username = request.POST.get("username")
         keywrd = request.POST.get("keywrd")
+        sort = request.POST.get("sort")
         # 获取搜索内容
         url = "https://api.bgm.tv/v0/search/subjects"
         headers = {'content-type': "application/json", 'User-Agent': 'kkkstra/bangumoue'}
-        body = {"keyword": keywrd, "filter": {"type": [2]}}
+        body = {"keyword": keywrd, "sort": sort, "filter": {"type": [2]}}
         res = requests.post(url, data=json.dumps(body), headers=headers)
         js_res = json.loads(res.content.decode())
         search_list = js_res.get("data")
