@@ -5,6 +5,7 @@ import string
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from anime import models
+from user import models as user_models
 from django.db.models import Q
 
 
@@ -295,3 +296,79 @@ def add_fav_from_bangumi(request):
             director = person_js_res[i].get("name")
             break
     return render(request, 'anime/add_fav_from_bangumi.html', locals())
+
+
+# 好友动态
+def anime_friends(request):
+    username = request.GET.get("username")
+    uid_from = user_models.User.objects.filter(username=username).first().id
+    # 检索好友
+    friends = user_models.UserRelation.objects.filter(uid_from=uid_from)
+    moments_data = []
+    for user_obj in friends:
+        uid_to = user_obj.uid_to
+        username_to = user_models.User.objects.filter(id=uid_to).first().username
+        # 检索该好友动态
+        favor_data = models.UserFavorAnime.objects.filter(username=username_to)
+        moments_data.extend(favor_data)
+    return render(request, 'anime/user_friends.html', locals())
+
+
+# 添加好友
+def anime_add_friends(request):
+    if request.method == "POST":
+        username_from = request.POST.get("username_from")
+        username_to = request.POST.get("username_to")
+        msg = request.POST.get("msg")
+        uid_from = user_models.User.objects.filter(username=username_from).first().id
+        uid_to = 0
+        user_to = user_models.User.objects.filter(username=username_to).first()
+        if user_to:
+            uid_to = user_to.id
+            urel_obj = user_models.UserRelation.objects.filter(uid_from=uid_from, uid_to=uid_to).first()
+            if urel_obj:
+                error = "%s 和 %s 已经是好友啦！" % (username_from, username_to)
+                return render(request, 'anime/add_friends_error.html', locals())
+            else:
+                fre_req = user_models.FriendsRequest.objects.filter(uid_from=uid_from, uid_to=uid_to).first()
+                if fre_req:
+                    user_models.FriendsRequest.objects.filter(uid_from=uid_from, uid_to=uid_to).update(msg=msg,
+                                                                                                       status=1,
+                                                                                                       username_from=username_from,
+                                                                                                       username_to=username_to)
+                else:
+                    fre_req = user_models.FriendsRequest(uid_from=uid_from, uid_to=uid_to, msg=msg,
+                                                         username_from=username_from, username_to=username_to)
+                    fre_req.save()
+                return redirect("/anime/")
+        else:
+            error = "用户 %s 不存在捏TvT" % username_to
+            return render(request, 'anime/add_friends_error.html', locals())
+    username = request.GET.get("username")
+    return render(request, 'anime/user_add_friends.html', locals())
+
+
+# 好友请求列表
+def anime_friends_request(request):
+    username = request.GET.get("username")
+    uid = user_models.User.objects.filter(username=username).first().id
+    freq_data = user_models.FriendsRequest.objects.filter(uid_to=uid)
+    return render(request, 'anime/user_friends_request.html', locals())
+
+
+# 接受或拒绝好友申请
+def anime_friends_request_op(request):
+    accept = request.GET.get("accept")
+    rid = request.GET.get("id")
+    req_obj = user_models.FriendsRequest.objects.filter(id=rid).first()
+    uid_from = req_obj.uid_from
+    uid_to = req_obj.uid_to
+    if accept == "1":
+        user_models.FriendsRequest.objects.filter(id=rid).update(status=2)
+        urel_obj_1 = user_models.UserRelation(uid_from=uid_from, uid_to=uid_to)
+        urel_obj_1.save()
+        urel_obj_2 = user_models.UserRelation(uid_from=uid_to, uid_to=uid_from)
+        urel_obj_2.save()
+    else:
+        user_models.FriendsRequest.objects.filter(id=rid).update(status=3)
+    return redirect('/anime/')

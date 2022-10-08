@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>好友请求</title>
+</head>
+<body>
+<h1>好友请求</h1>
+<table border="1">
+    <thead>
+        <tr>
+            <th>用户名</th>
+            <th>验证信息</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for freq_obj in freq_data %}
+        <tr>
+            <td>{{ freq_obj.username_from }}</td>
+            <td>{{ freq_obj.msg }}</td>
+            <td>
+                {% if freq_obj.status == 1 %}
+                    <a href="/anime/friends/op?accept=1&id={{ freq_obj.id }}">通过</a>
+                    <a href="/anime/friends/op?accept=0&id={{ freq_obj.id }}">拒绝</a>
+                {% elif freq_obj.status == 2 %}
+                    已通过
+                {% elif freq_obj.status == 3 %}
+                    已拒绝
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</body>
+</html>

@@ -21,7 +21,7 @@ from openid.views import oidc_authorize, oidc_authorize_callback, oidc_token, oi
     oidc_config
 from anime.views import anime_manage, delete_anime, anime_favor, add_fav, delete_fav, edit_fav, search_fav, \
     get_code_from_bangumi, get_code_from_bangumi_callback, import_data_from_bangumi, add_fav_from_bangumi, \
-    search_fav_from_bangumi
+    search_fav_from_bangumi, anime_friends, anime_add_friends, anime_friends_request, anime_friends_request_op
 
 urlpatterns = [
     path('user/admin/', admin.site.urls),
@@ -52,5 +52,9 @@ urlpatterns = [
     path('anime/search_fav', search_fav),
     path('anime/get_code', get_code_from_bangumi),
     path('anime/get_code/callback', get_code_from_bangumi_callback),
-    path('anime/import', import_data_from_bangumi)
+    path('anime/import', import_data_from_bangumi),
+    path('anime/friends/', anime_friends),  # 好友动态
+    path('anime/friends/add', anime_add_friends),  # 添加好友
+    path('anime/friends/request', anime_friends_request),  # 好友请求
+    path('anime/friends/op', anime_friends_request_op),  # 好友请求
 ]

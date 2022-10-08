@@ -10,7 +10,7 @@
     <p>用户名：<input type="text" name="username" value={{ username }}></p>
     <p>关键字：<input type="text" name="keywrd" value={{ keywrd }}></p>
     <p>排序方式:
-        <input type="radio" name="sort" value="match" {% if sort == "match" %}checked{% endif %}>匹配度
+        <input type="radio" name="sort" value="match" checked>匹配度
         <input type="radio" name="sort" value="heat" {% if sort == "heat" %}checked{% endif %}>收藏人数
         <input type="radio" name="sort" value="rank" {% if sort == "rank" %}checked{% endif %}>排名
         <input type="radio" name="sort" value="score" {% if sort == "score" %}checked{% endif %}>评分

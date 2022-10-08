@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>好友动态</title>
+</head>
+<body>
+<h1>好友动态</h1>
+<table border="1">
+    <thead>
+        <tr>
+            <th>好友</th>
+            <th>番剧名</th>
+            <th>状态</th>
+            <th>评分</th>
+            <th>吐槽</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for mom_obj in moments_data %}
+        <tr>
+            <td>{{ mom_obj.username }}</td>
+            <td>{{ mom_obj.title }}</td>
+            <td>
+                {% if mom_obj.type == 1 %}想看
+                {% elif mom_obj.type == 2 %}看过
+                {% elif mom_obj.type == 3 %}在看
+                {% elif mom_obj.type == 4 %}搁置
+                {% elif mom_obj.type == 5 %}抛弃
+                {% endif %}
+            </td>
+            <td>{{ mom_obj.score }}</td>
+            <td>{{ mom_obj.comment }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</body>
+</html>
