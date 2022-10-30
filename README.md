@@ -2,7 +2,7 @@
 
 ## 每日学习日志
 
-[传送门](https://github.com/patricklai46/bingyannote)
+[传送门](https://blog.kkkstra.cn/2022/09/30/bingyan2022autumn/)
 
 ## 阶段一
 
